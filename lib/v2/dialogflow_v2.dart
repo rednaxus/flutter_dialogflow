@@ -120,21 +120,13 @@ class Dialogflow {
       headers: {
         HttpHeaders.authorizationHeader: "Bearer ${authGoogle.getToken}"
       },
-      body: jsonEncode( params == null ? {
-        'queryInput': {
-          'text':{
-            'text': query,
-            'language_code': language
-          }
-        }
-      } : {
-        'queryParams': params,
+      body: jsonEncode({
         'queryInput': {
           'text': {
             'text': query,
             'language_code': language
           }
-        }
+        }, ...params == null? {} : { 'queryParams': params }
       })
     );
     //"{'queryParams':${jsonEncode(params)},'queryInput':{'text':{'text':'$query','language_code':'$language'}}}");
