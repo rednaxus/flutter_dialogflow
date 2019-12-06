@@ -114,13 +114,30 @@ class Dialogflow {
     return "https://dialogflow.googleapis.com/v2/projects/${authGoogle.getProjectId}/agent/sessions/${authGoogle.getSessionId}:detectIntent";
   }
 
-  Future<AIResponse> detectIntent(String query) async {
+  Future<AIResponse> detectIntent( String query, { Map <String,dynamic>params } ) async {
+    //print(jsonEncode(params));
     var response = await authGoogle.post(_getUrl(),
-        headers: {
-          HttpHeaders.authorizationHeader: "Bearer ${authGoogle.getToken}"
-        },
-        body:
-            "{'queryInput':{'text':{'text':'$query','language_code':'$language'}}}");
+      headers: {
+        HttpHeaders.authorizationHeader: "Bearer ${authGoogle.getToken}"
+      },
+      body: jsonEncode( params == null ? {
+        'queryInput': {
+          'text':{
+            'text': query,
+            'language_code': language
+          }
+        }
+      } : {
+        'queryParams': params,
+        'queryInput': {
+          'text': {
+            'text': query,
+            'language_code': language
+          }
+        }
+      })
+    );
+    //"{'queryParams':${jsonEncode(params)},'queryInput':{'text':{'text':'$query','language_code':'$language'}}}");
     return AIResponse(body: json.decode(response.body));
   }
 }
